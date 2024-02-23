@@ -1,4 +1,7 @@
 using BusinessLogic;
+using BusinessLogic.Abstractions.Behaviours;
+using BusinessLogic.Abstractions.Caching;
+using BusinessLogic.Caching;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,10 +14,19 @@ builder.Services.AddSwaggerGen();
 
 foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 {
-    builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(assembly));
+    builder.Services.AddMediatR(cfg => 
+    {
+        cfg.RegisterServicesFromAssemblies(assembly);
+
+        cfg.AddOpenBehavior(typeof(QueryCachingPipelineBehavior<,>));
+    });
+
 }
 
 builder.Services.AddSingleton<FakeDataStore>();
+
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<ICacheService, CacheService>();
 
 var app = builder.Build();
 
