@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Commands.Employees.CreateEmployee;
 using BusinessLogic.Queries.Employees.GetAll;
 using BusinessLogic.Queries.Employees.GetById;
+using BusinessLogic.Queries.Employees.GetCachedEmployeeByIdQuery;
 
 using MediatR;
 
@@ -43,5 +44,14 @@ namespace CQRS_architecture.Controllers
 
             return Ok(employee);
         }
+
+        [HttpGet("cachedEmployeeById/{id}")]
+        public async Task<IActionResult> GetCachedEmployeeById(int id)
+        {
+            var employee = await _mediator.Send(new GetCachedEmployeeByIdQuery(id));
+
+            return Ok(employee);
+        }
+
     }
 }
